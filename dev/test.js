@@ -16,15 +16,32 @@ testcoin.createNewTransaction(100, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
 //should be added to this block now
 testcoin.createNewBlock(12121221, 'ererereer', 'sdssdsdsdsds');
 
-//running 'node dev/test' should print Blockchain with 2 blocks 
-//with the second block having the value of `[Array]` in the tranactions property 
-//However this output log won't actually show details of the transaction stored 
-//in block 2. To output the transaction detail you need to use the following line:
-//console.log(testcoin.chain[1]); as shown further down
-console.log(testcoin);
+/*First test print out:
+    //running 'node dev/test' should print Blockchain with 2 blocks 
+    //with the second block having the value of `[Array]` in the tranactions property 
+    //However this output log won't actually show details of the transaction stored 
+    //in block 2. To output the transaction detail you need to use the following line:
+    //console.log(testcoin.chain[1]); as shown further down
+    console.log(testcoin);
+*/
 
-//will print the content of the second block in the chain
-// outputting the new transaction details
-//from ALEXSDF34R32Q to JENN2343FWDCADSC of 100
-//which is stored in block 2
-console.log("\n -- print only second block with transaction details -- \n", testcoin.chain[1]);
+/*Second test print out:
+    //will print the content of the second block in the chain
+    // outputting the new transaction details
+    //from ALEXSDF34R32Q to JENN2343FWDCADSC of 100
+    //which is stored in block 2
+    console.log("\n -- print only second block with transaction details -- \n", testcoin.chain[1]);
+*/
+
+//create new mroe transactions which will be stored in pending transaction array
+testcoin.createNewTransaction(50, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
+testcoin.createNewTransaction(300, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
+testcoin.createNewTransaction(2000, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
+
+//Third test print out:
+    //This time the blockchain will output in the logs of 2 block,
+    //and the 3 newly created transactions will show in the 
+    //pendingTransactions array because there's no new block that was
+    //created after these new transactions (in order to store them)
+    console.log(testcoin);
+
