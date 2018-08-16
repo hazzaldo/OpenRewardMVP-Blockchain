@@ -38,10 +38,22 @@ testcoin.createNewTransaction(50, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
 testcoin.createNewTransaction(300, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
 testcoin.createNewTransaction(2000, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
 
-//Third test print out:
+/*Third test print out:
     //This time the blockchain will output in the logs of 2 block,
     //and the 3 newly created transactions will show in the 
     //pendingTransactions array because there's no new block that was
     //created after these new transactions (in order to store them)
     console.log(testcoin);
+*/
 
+//Fourth test print out:
+    //We'll create a new block to store the 3 newly created 
+    //transactions in the previous lines
+    testcoin.createNewBlock(9898989898, 'AAAAAAAA', 'BBBBBBB');
+    //this should output a blockchain with third block which will 
+    //store the 3 newly created transactions in the previous lines
+    console.log(testcoin);
+
+    //this console output will take a more detailed look at the 
+    //third block, printing out the transactions inside it
+    console.log(testcoin.chain[2]);
