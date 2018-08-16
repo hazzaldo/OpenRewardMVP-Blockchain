@@ -1,4 +1,6 @@
 
+const sha256 = require('sha256');
+
 //I created constructor function over a class (just my preference), because in Javascript there really are no classes
 //Classes in Javascript are simply a kind of sugar coating on top of constructor functions and the object prototype.
 //So I simply prefer to stick with constructor function themselves.
@@ -72,6 +74,19 @@ Blockchain.prototype.createNewTransaction = function(amount, sender, recipient) 
 	this.pendingTransactions.push(newTransaction);
 	//returns the index of the next block (when it's mined) that our new transaction will be stored in
 	return this.getLastBlock()['index'] + 1;
+}
+
+//Hashing method - takes a block from the blockchain and hash it into some fixed length string
+//that to us will appear random. The block previous block hash, current block data and nonce 
+//will be passed as a params, combined into one string constant and the method returns
+//some fixed length string, from all the 3 data pieces we passed, using SHA256
+Blockchain.prototype.hashBlock = function(previousBlockHash, currentBlockData, nonce) {
+	//currentBlockData will an array of transactions or some kind of JSON data object
+	//the JSON.stringify simply turns the data into a string. nonce will be a integer
+	//so it needs to be converted to string. 
+	const dataAsString = previousBlockHash + nonce.toString() + JSON.stringify(currentBlockData) 
+	const hash = sha256(dataAsString);
+	return hash;
 }
 
 //export Blockchain constructor function to be accessible 

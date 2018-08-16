@@ -1,5 +1,5 @@
 //import Blockchain constructor function from blockchain.js file
-const Blockchain = require('./blockchain');
+const Blockchain = require('./blockchain').default;
 
 //create a new, there no data in it and no blocks
 const testcoin = new Blockchain();
