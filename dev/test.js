@@ -4,32 +4,46 @@ const Blockchain = require('./blockchain');
 //create a new, there no data in it and no blocks
 const testcoin = new Blockchain();
 
-//creating new block. We're just passing in what we want for now
-testcoin.createNewBlock(2899, 'WEQEQEQEQEW', 'RTRTRTRTRTRRTTR');
-
-//create new transaction, which will be added to the pending transaction array
-//because we have not mined or created a new block after creating this 
-//transaction
-testcoin.createNewTransaction(100, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
-
-//create second block on the chain. The new transaction in the previous line
-//should be added to this block now
-testcoin.createNewBlock(12121221, 'ererereer', 'sdssdsdsdsds');
-
-/*First test print out:
+/*First test 
     //running 'node dev/test' should print Blockchain with 2 blocks 
     //with the second block having the value of `[Array]` in the tranactions property 
     //However this output log won't actually show details of the transaction stored 
     //in block 2. To output the transaction detail you need to use the following line:
+
+    //creating new block. We're just passing in what we want for now
+    testcoin.createNewBlock(2899, 'WEQEQEQEQEW', 'RTRTRTRTRTRRTTR');
+
+    //create new transaction, which will be added to the pending transaction array
+    //because we have not mined or created a new block after creating this 
+    //transaction
+    testcoin.createNewTransaction(100, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
+
+    //create second block on the chain. The new transaction in the previous line
+    //should be added to this block now
+    testcoin.createNewBlock(12121221, 'ererereer', 'sdssdsdsdsds');
     //console.log(testcoin.chain[1]); as shown further down
     console.log(testcoin);
 */
 
-/*Second test print out:
+/*Second test
     //will print the content of the second block in the chain
     // outputting the new transaction details
     //from ALEXSDF34R32Q to JENN2343FWDCADSC of 100
     //which is stored in block 2
+
+    //create new transaction, which will be added to the pending transaction array
+    //because we have not mined or created a new block after creating this 
+    //transaction
+    testcoin.createNewTransaction(100, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
+
+     //create new transaction, which will be added to the pending transaction array
+    //because we have not mined or created a new block after creating this 
+    //transaction
+    testcoin.createNewTransaction(100, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
+
+    //create second block on the chain. The new transaction in the previous line
+    //should be added to this block now
+    testcoin.createNewBlock(12121221, 'ererereer', 'sdssdsdsdsds');
     console.log("\n -- print only second block with transaction details -- \n", testcoin.chain[1]);
 */
 
@@ -38,7 +52,7 @@ testcoin.createNewBlock(12121221, 'ererereer', 'sdssdsdsdsds');
 //testcoin.createNewTransaction(300, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
 //testcoin.createNewTransaction(2000, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
 
-/*Third test print out:
+/*Third test
     //This time the blockchain will output in the logs of 2 block,
     //and the 3 newly created transactions will show in the 
     //pendingTransactions array because there's no new block that was
@@ -46,7 +60,7 @@ testcoin.createNewBlock(12121221, 'ererereer', 'sdssdsdsdsds');
     console.log(testcoin);
 */
 
-/*Fourth test print out:
+/*Fourth test
     //We'll create a new block to store the 3 newly created 
     //transactions in the previous lines
     testcoin.createNewBlock(9898989898, 'AAAAAAAA', 'BBBBBBB');
@@ -59,7 +73,7 @@ testcoin.createNewBlock(12121221, 'ererereer', 'sdssdsdsdsds');
     console.log(testcoin.chain[2]);
 */
 
-/*Fifth test print out
+/*Fifth test
 //In this test we will be testing the 'hashBlock' method
 //to make sure the data params we pass to the method returns
 // a hash string. And if you change one single character from
@@ -88,7 +102,7 @@ const nonce = 100;
 console.log(testcoin.hashBlock(previousBlockHash, currentBlockData, nonce));
 */
 
-//Sixth test print out
+/*Sixth test
 //Test the the proof of work method
 //note there's no need to define and initialise a nonce
 //for this method, as the whole point is for the mining 
@@ -127,4 +141,10 @@ console.log(testcoin.proofOfWork(previousBlockHash, currentBlockData));
 //as the nonce and we should get back the same hash string
 //that starts with four zeros.
 console.log(testcoin.hashBlock(previousBlockHash, currentBlockData, 7339));
+*/
 
+//Seventh test
+//To test the genesis block is being created
+//when we simply create a new instance of the 
+//Blockchain class
+console.log(testcoin)

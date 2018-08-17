@@ -20,6 +20,16 @@ function Blockchain() {
 	this.chain = [];
 	//here we will hold all the newly created trasactions before they're placed inside a block that is mined
 	this.pendingTransactions = [];
+
+	//create the gensis block. We will not have niether - nonce
+	//previousBlockHash or Hash params to provide. So we'll simply
+	//pass arbitrary params. We'll pass a nonce 100, previousBlockHash 
+	//of string 0 and a hash of string 0 as well.
+	//Important: it's only allowed to pass arbitrary values for 
+	//the Genesis block. Any blocks after that we'll have to pass
+	//legitimate values as params in order for the blockchain
+	//to work properly.
+	this.createNewBlock(100, '0', '0');
 }
 
 //a function to create new block on our Blockchain prototype object. 
