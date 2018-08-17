@@ -59,7 +59,7 @@ testcoin.createNewBlock(12121221, 'ererereer', 'sdssdsdsdsds');
     console.log(testcoin.chain[2]);
 */
 
-//Fifth test print out
+/*Fifth test print out
 //In this test we will be testing the 'hashBlock' method
 //to make sure the data params we pass to the method returns
 // a hash string. And if you change one single character from
@@ -86,3 +86,45 @@ const currentBlockData = [
 const nonce = 100; 
 
 console.log(testcoin.hashBlock(previousBlockHash, currentBlockData, nonce));
+*/
+
+//Sixth test print out
+//Test the the proof of work method
+//note there's no need to define and initialise a nonce
+//for this method, as the whole point is for the mining 
+//node to start from nonce value of 0 and keep trying 
+//until it finds and returns the nonce for the valid hash
+//which should starts with four zeros. In this case based
+//on the given 'previousBlockHash' and 'currentBlockData' 
+//that we have initialised, the nonce returned is 7339. 
+//This means it took 7339 iterations of the while loop 
+//the invokes the hasBlock method to find a hash that
+//starts with four zeros.
+const previousBlockHash = 'OWEDWDWE0E0W0300232032';
+const currentBlockData = [
+    {
+        amount: 10,
+        sender: 'JOHN90EEREDFDFDFF2',
+        recipient: 'TOMFSDFSDFSDSCCV',
+    },
+    {
+        amount: 30,
+        sender: 'JENN32EWEWDWD',
+        recipient: 'JULIA09DFSDFSDSCCV',
+    },
+    {
+        amount: 200,
+        sender: 'JENN32EWEWDWD',
+        recipient: 'JULIA09DFSDFSDSCCV',
+    },
+];
+
+console.log(testcoin.proofOfWork(previousBlockHash, currentBlockData));
+
+//Based on the given 'previousBlockHash' and 'currentBlockData' 
+//that we have initialised, the nonce returned is 7339.
+//We can test with the hashBlock method now, passing 7339
+//as the nonce and we should get back the same hash string
+//that starts with four zeros.
+console.log(testcoin.hashBlock(previousBlockHash, currentBlockData, 7339));
+
