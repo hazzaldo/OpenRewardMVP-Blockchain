@@ -12,11 +12,23 @@ var express = require('express')
 //or different routes. 
 var app = express()
  
-//This is an example of GET end point, which is just slash ('/')
-//and with this end point, we're sending back response of hello world.
-app.get('/', function (req, res) {
-  res.send('Hello World amended')
+//This GET end point, is ('/blockchain')
+//When we hit this endpoint, it is going to return to us our blockchain
+app.get('/blockchain', function (req, res) {
+  
 })
+
+//This POST end point, is ('/transaction')
+//When we hit this endpoint, it is going to create new transaction
+app.post('/transaction', function(req, res) {
+
+});
+
+//This GET end point, is ('/transaction')
+//When we hit this endpoint, it is going to mine a new block for us
+app.get('/mine', function(req, res) {
+
+});
 
 //this whole server is listening on port 3000.
 app.listen(3000)
