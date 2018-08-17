@@ -1,5 +1,5 @@
 //import Blockchain constructor function from blockchain.js file
-const Blockchain = require('./blockchain').default;
+const Blockchain = require('./blockchain');
 
 //create a new, there no data in it and no blocks
 const testcoin = new Blockchain();
@@ -34,9 +34,9 @@ testcoin.createNewBlock(12121221, 'ererereer', 'sdssdsdsdsds');
 */
 
 //create new mroe transactions which will be stored in pending transaction array
-testcoin.createNewTransaction(50, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
-testcoin.createNewTransaction(300, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
-testcoin.createNewTransaction(2000, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
+//testcoin.createNewTransaction(50, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
+//testcoin.createNewTransaction(300, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
+//testcoin.createNewTransaction(2000, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
 
 /*Third test print out:
     //This time the blockchain will output in the logs of 2 block,
@@ -46,7 +46,7 @@ testcoin.createNewTransaction(2000, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
     console.log(testcoin);
 */
 
-//Fourth test print out:
+/*Fourth test print out:
     //We'll create a new block to store the 3 newly created 
     //transactions in the previous lines
     testcoin.createNewBlock(9898989898, 'AAAAAAAA', 'BBBBBBB');
@@ -57,3 +57,32 @@ testcoin.createNewTransaction(2000, 'ALEXSDF34R32Q', 'JENN2343FWDCADSC');
     //this console output will take a more detailed look at the 
     //third block, printing out the transactions inside it
     console.log(testcoin.chain[2]);
+*/
+
+//Fifth test print out
+//In this test we will be testing the 'hashBlock' method
+//to make sure the data params we pass to the method returns
+// a hash string. And if you change one single character from
+//any of the params it should change the hash string output 
+//completely
+const previousBlockHash = 'OWEDWDWE0E0W0300232032';
+const currentBlockData = [
+    {
+        amount: 10,
+        sender: 'JOHN90EEREDFDFDFF2',
+        recipient: 'TOMFSDFSDFSDSCCV',
+    },
+    {
+        amount: 30,
+        sender: 'JENN32EWEWDWD',
+        recipient: 'JULIA09DFSDFSDSCCV',
+    },
+    {
+        amount: 200,
+        sender: 'JENN32EWEWDWD',
+        recipient: 'JULIA09DFSDFSDSCCV',
+    },
+]
+const nonce = 100; 
+
+console.log(testcoin.hashBlock(previousBlockHash, currentBlockData, nonce));
