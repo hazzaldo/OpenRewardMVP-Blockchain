@@ -89,6 +89,25 @@ Blockchain.prototype.hashBlock = function(previousBlockHash, currentBlockData, n
 	return hash;
 }
 
+//Proof of work method - which makes a node (miner's machine)
+//continuously run the hashBlock method, incrememnting the nonce
+//until a hash is returned that starts with fours zeros, which is
+//the blockchain's condition for proof of work acceptance.
+//This could take time and uses a lot of energy from the node.
+//Once the valid hash is returned, the nonce responsible for 
+//that valid hash is returned.
+Blockchain.prototype.proofOfWork = function(previousBlockHash, currentBlockData) {
+	//define a nonce. Unlike const, let is a variable
+	let nonce = 0;
+	let hash = this.hashBlock(previousBlockHash, currentBlockData, nonce)
+	while (hash.substring(0, 4) !== '0000') {
+		nonce++;
+		hash = this.hashBlock(previousBlockHash, currentBlockData, nonce);
+	}
+
+	return nonce;
+}
+
 //export Blockchain constructor function to be accessible 
 //by other js files
 module.exports = Blockchain;
