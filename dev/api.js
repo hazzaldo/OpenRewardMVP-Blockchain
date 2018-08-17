@@ -7,16 +7,16 @@
 //'Hello World'. 
 //If you change any api and its response. You need to stop the express
 //server (Ctrl+C). Then start it gain (node dev/api.js), to see the changes.
-var express = require('express')
+var express = require('express');
 //create an app. With this app we can create different end points
 //or different routes. 
-var app = express()
+var app = express();
  
 //This GET end point, is ('/blockchain')
 //When we hit this endpoint, it is going to return to us our blockchain
 app.get('/blockchain', function (req, res) {
   
-})
+});
 
 //This POST end point, is ('/transaction')
 //When we hit this endpoint, it is going to create new transaction
@@ -30,5 +30,11 @@ app.get('/mine', function(req, res) {
 
 });
 
-//this whole server is listening on port 3000.
-app.listen(3000)
+//This whole server is listening on port 3000. 
+//We also passed a function to the listen method, 
+//which will console log to output a message informing
+//us when the server starts and our port is running, we 
+//will be notified of the output console log text.
+app.listen(3000, function() {
+    console.log('Listening on port 3000... ');
+});
