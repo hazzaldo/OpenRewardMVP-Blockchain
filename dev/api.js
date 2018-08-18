@@ -35,7 +35,7 @@ app.post('/transaction', function(req, res) {
 //This GET end point, is ('/transaction')
 //When we hit this endpoint, it is going to mine a new block for us
 app.get('/mine', function(req, res) {
-
+    
 });
 
 //This whole server is listening on port 3000. 
