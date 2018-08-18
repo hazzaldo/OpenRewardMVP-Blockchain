@@ -29,6 +29,9 @@ var app = express();
 //may not be there or may not be a string, and toString may not be a function and instead a string 
 //or other user input. 
 const bodyParser = require('body-parser');
+const Blockchain = require('./blockchain');
+
+const testcoin = new Blockchain();
 
 //If a request comes in with JSON data ... 
 app.use(bodyParser.json());
