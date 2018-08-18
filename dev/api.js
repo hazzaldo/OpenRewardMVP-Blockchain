@@ -45,7 +45,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //This GET end point, is ('/blockchain')
 //When we hit this endpoint, it is going to return to us our blockchain
 app.get('/blockchain', function (req, res) {
-  
+    //End point will return our Blockchain
+    res.send(testcoin);
 });
 
 //This POST end point, is ('/transaction')
