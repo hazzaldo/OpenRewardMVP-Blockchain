@@ -29,7 +29,17 @@ app.get('/blockchain', function (req, res) {
 //This POST end point, is ('/transaction')
 //When we hit this endpoint, it is going to create new transaction
 app.post('/transaction', function(req, res) {
-
+    //When the POST request is made, we're printing out the Request Body in the console log. 
+    //The Request Body is the data that we send with our post request 
+    //to be stored in the backend (in the form of JSON), in this case our backend is the Blockchain.
+    //This way when we make the POST request we can see what data we're going to store in the backend
+    //printed out in the console log - in this case it's the new transaction made.
+    console.log(req.body);
+    //In the response from request - in this case we're printing out the request body
+    //specifically the 'amount' key-value pair (which is the cryptocurrency amount) 
+    //in the request body JSON.
+    //W're using string interpolation to print out the req.body.amount from the JSON.
+    res.send(`The amount of the transaction is ${req.body.amount} testcoin`);
 });
 
 //This GET end point, is ('/transaction')
