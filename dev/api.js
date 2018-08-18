@@ -52,12 +52,22 @@ app.get('/blockchain', function (req, res) {
 //This POST end point, is ('/transaction')
 //When we hit this endpoint, it is going to create new transaction
 app.post('/transaction', function(req, res) {
+    //We're creating a new transaction, passing it the cryptocurrency amount, send and recipient, which will be 
+    //passed in from the body request of whoever will be calling this end point when they create a new transaction
+    //This request will then return the block index (that will store the new transaction), as the response of the request
+    const blockIndexToStoreNewTrans = testcoin.createNewTransaction(req.body.amount, req.body.sender, req.body.recipient);
+
+    //This request will then return the block index (that will store the new transaction), as the response of the request.
+    //Will send this response as a json note.
+    res.json({ note: `Transaction will be added in block index ${blockIndexToStoreNewTrans}.` });
+
     //When the POST request is made, we're printing out the Request Body in the console log. 
     //The Request Body is the data that we send with our post request 
     //to be stored in the backend (in the form of JSON), in this case our backend is the Blockchain.
     //This way when we make the POST request we can see what data we're going to store in the backend
     //printed out in the console log - in this case it's the new transaction made.
-    console.log(req.body);
+    /* console.log(req.body); */
+
     //In the response from request - in this case we're printing out the request body
     //specifically the 'amount' key-value pair (which is the cryptocurrency amount) 
     //in the request body JSON.
@@ -65,7 +75,8 @@ app.post('/transaction', function(req, res) {
     //You can test the end point 'localhost:3000/transaction' in postman, to see the resutls of
     //this end point. 
     //for more info on create 
-    res.send(`The amount of the transaction is ${req.body.amount} testcoin`);
+    /*res.send(`The amount of the transaction is ${req.body.amount} testcoin`); */
+
     //for more info one how to create POST request, follow this Udemy video lesson:
     //https://www.udemy.com/build-a-blockchain-in-javascript/learn/v4/t/lecture/10399578?start=0
 });
