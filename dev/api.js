@@ -16,10 +16,29 @@
 //and whenever we change any code in the 'api.js' file, it will automatically 
 //restart the express server for us, so we don't have to. 
 var express = require('express');
+
 //create an app. With this app we can create different end points
 //or different routes. 
 var app = express();
- 
+
+//body-parser npm module, parses incoming request bodies in a middleware before your handlers, 
+//so that your request body JSON becomes accessible/available under the req.body property.
+//Note as req.body's shape is based on user-controlled input, all properties and values 
+//in this object are untrusted and should be validated before trusting. 
+//For example, req.body.foo.toString() may fail in multiple ways, for example the foo property 
+//may not be there or may not be a string, and toString may not be a function and instead a string 
+//or other user input. 
+const bodyParser = require('body-parser');
+
+//If a request comes in with JSON data ... 
+app.use(bodyParser.json());
+//or with form data, then we simply want to parse that data so that we can access
+//it in any of the routes/end points we write in our express server code.
+//so any of the end points we hit, our data will first go through the Body Parser
+//so we can access the data. Then we can use the data in whichever end point we'll
+//be receiving it.
+app.use(bodyParser.urlencoded({ extended: false }));
+
 //This GET end point, is ('/blockchain')
 //When we hit this endpoint, it is going to return to us our blockchain
 app.get('/blockchain', function (req, res) {
@@ -39,7 +58,12 @@ app.post('/transaction', function(req, res) {
     //specifically the 'amount' key-value pair (which is the cryptocurrency amount) 
     //in the request body JSON.
     //W're using string interpolation to print out the req.body.amount from the JSON.
+    //You can test the end point 'localhost:3000/transaction' in postman, to see the resutls of
+    //this end point. 
+    //for more info on create 
     res.send(`The amount of the transaction is ${req.body.amount} testcoin`);
+    //for more info one how to create POST request, follow this Udemy video lesson:
+    //https://www.udemy.com/build-a-blockchain-in-javascript/learn/v4/t/lecture/10399578?start=0
 });
 
 //This GET end point, is ('/transaction')
