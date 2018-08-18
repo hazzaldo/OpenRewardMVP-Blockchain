@@ -31,6 +31,17 @@ var app = express();
 const bodyParser = require('body-parser');
 const Blockchain = require('./blockchain');
 
+//this library creates a unique random string for us.
+//We're going to use this string as this network node address.
+const uuid = require('uuid/v1');
+//creates a uuid for this node to act as the recipient address
+//to receive any incoming cryptocurrency. We use the split method
+//to remove the dashes that will be included in the uuid by default.
+//the random string uuid created is guaranteed to be unique to a very 
+//high percentage. We need to ensure the uuid is unique for every node
+//otherwise we will end up sending cryptocurrency to more than one node.
+const nodeAddress = uuid().split('-').join('');
+
 const testcoin = new Blockchain();
 
 //If a request comes in with JSON data ... 
@@ -81,8 +92,10 @@ app.post('/transaction', function(req, res) {
     //https://www.udemy.com/build-a-blockchain-in-javascript/learn/v4/t/lecture/10399578?start=0
 });
 
-//This GET end point, is ('/transaction')
-//When we hit this endpoint, it is going to mine a new block for us
+//This GET end point, once called, uses the proofOfWork method defined in the blockchain
+//to create a new block. It also create a new tranaction to reward the node that mined the block. 
+//finally it returns (i.e. the response will be) the success message that a new block is mined
+//and returns the new Block info.
 app.get('/mine', function(req, res) {
     const lastBlock = testcoin.getLastBlock();
 
@@ -100,7 +113,10 @@ app.get('/mine', function(req, res) {
     const nonce = testcoin.proofOfWork(previousBlockHash, currentBlockData);
     const blockHash = testcoin.hashBlock(previousBlockHash, currentBlockData, nonce);
 
-    testcoin.createNewTransaction(12.5, "00");
+    //Send a reward of 12.5 (cryptocurrency) to whoever mined the block.
+    //The "sender" address of 00 in standard blockchain means it is sent 
+    //as a reward. 
+    testcoin.createNewTransaction(12.5, "00", nodeAddress);
     const newBlock = testcoin.createNewBlock(nonce, previousBlockHash, blockHash);
 
     //Finally we return or send a response back of new mined block as a response
