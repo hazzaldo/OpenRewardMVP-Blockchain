@@ -7,6 +7,14 @@
 //'Hello World'. 
 //If you change any api and its response. You need to stop the express
 //server (Ctrl+C). Then start it gain (node dev/api.js), to see the changes.
+
+//'nodemon' npm module is also added. This will help in automatically restarting
+//our express server application automatically whenever a change in the code 
+//in our 'api.js' file takes place. This is made possible by also adding the 
+//"start": "nodemon --watch dev -e js dev/api.js" script in the 'package.json' file
+//So now we can simply run the command 'npm start', to start our express server,
+//and whenever we change any code in the 'api.js' file, it will automatically 
+//restart the express server for us, so we don't have to. 
 var express = require('express');
 //create an app. With this app we can create different end points
 //or different routes. 
