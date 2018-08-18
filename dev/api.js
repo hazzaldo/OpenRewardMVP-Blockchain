@@ -84,7 +84,31 @@ app.post('/transaction', function(req, res) {
 //This GET end point, is ('/transaction')
 //When we hit this endpoint, it is going to mine a new block for us
 app.get('/mine', function(req, res) {
-    
+    const lastBlock = testcoin.getLastBlock();
+
+    //hash property is accessed from the prototype "createNewBlock" instance method object
+    //within which is newBlock, and inside it is a hash property. 
+    const previousBlockHash = lastBlock['hash'];
+
+    //For current block data we just included pending transaction and current block index.
+    //This will then be hashed to create the current block's hash. 
+    const currentBlockData = {
+        transactions: testcoin.pendingTransactions,
+        index: lastBlock['index'] + 1
+    };
+
+    const nonce = testcoin.proofOfWork(previousBlockHash, currentBlockData);
+    const blockHash = testcoin.hashBlock(previousBlockHash, currentBlockData, nonce);
+
+    testcoin.createNewTransaction(12.5, "00");
+    const newBlock = testcoin.createNewBlock(nonce, previousBlockHash, blockHash);
+
+    //Finally we return or send a response back of new mined block as a response
+    //to whoever made the request
+    res.json( {
+        note: "New block mined successfully",
+        block: newBlock
+    });
 });
 
 //This whole server is listening on port 3000. 
