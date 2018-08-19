@@ -162,15 +162,39 @@ app.get('/mine', function(req, res) {
     });
 });
 
-//Endpoint that will register and broadcast a node to the whole
-//network. We will send in the URL of the new node that we want
+//Endpoint that will register and broadcast the new node on its
+//server and then it's going to broadcast this new node to all
+//of the other nodes on the whole network. 
+//We will send in the URL of the new node that we want
 //to add to our network via the http request body.
 //We will then do some calculations and then broadcast it
 //to the whole network so that other nodes can it add it as well.
 app.post('/register-and-broadcast-node', function(req, res) {
 
     const newNodeURL = req.body.newNodeURL;
-})
+});
+
+//Endpoint will register a node with the network.
+//The difference between this endpoint and the 
+//other end point: '/register-and-broadcast-node'
+//is that this endpoint will need to be called,
+//simply to enable all the other nodes on the network 
+//to accept the new network node, inside of this endpoint.
+//So this endpoint should be called after the other endpoint
+//'/register-and-broadcast-node' has already been called to 
+//register the new node on its own server first and broadcast
+//itself to the entire network. So this endpoint only ensures
+//the other nodes on the network register the new node. We do not 
+//want them to broadcast the new node, because the new node has already
+//been broadcast. If all the other nodes in the network were to broadcast
+//the new node as well, that would severely degrade the performance of our 
+//blockchain network and would lead to an infinite loop that would crash 
+//the blockchain. 
+//So when all the other nodes on the network receive the URL of the new node
+//we just want them to register it.
+app.post('/register-node', function(req, res) {
+
+});
 
 //This whole express js server use to listen to port 3000.
 //in previous git commits. Now we referenced the port as 
