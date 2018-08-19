@@ -183,19 +183,107 @@ app.post('/register-and-broadcast-node', function(req, res) {
     //will check if the new node URL does not exist on the array of existing network nodes
     //then push/add the new node URL to the array of existing nodes
     //on the network. == -1 means it's not within the array index range
-    //(i.e. not part of the array).
+    //(i.e. not part of the array). This is the first step where the new node
+    //is now registered with the current network node that is running this API endpoint
+    //and registering our new node.
     if (testcoin.networkNodes.indexOf(newNodeURL) == -1) {
         testcoin.networkNodes.push(newNodeURL);
     }
 
-    //for each network node that is already present on the network
+    //define an array to store all of our returned promises
+    //from each request we make for each of our nodes to register 
+    //the new node, in the line below
+    const registerNodesPromises = [];
+    //Iterate through all of our existing nodes in our blockchain network.
+    //For each network node that is already present on the network
     //(i.e. inside of our networkNodes array) we want to register,
     //our new node URL with each of these nodes, by calling the 
     //'register-node' endpoint. We're going to make a request to
     //every network node at the 'register-node' endpoint.
+    //This step is where we're actually broadcasting the new
+    //node to the other nodes in the network.
     testcoin.networkNodes.forEach(networkNodeURL => {
-        // '/register-node' endpoint 
+        //use '/register-node' endpoint on each network node
+        //define the options that we want to use
+        //in each of our http requests
+        const requestOptions = {
+            //we want to all the URI (or URL) of the '/register-node' endpoint
+            //on each of our network nodes URL
+            uri: networkNodeURL + '/register-node',
+            //next we want to specify the type http method that we want to use (i.e. post)
+            method: 'POST',
+            //next we want to specify what data want to include in the request body
+            //which is the newNodeURL, to inform every node of the new node URL
+            body: { newNodeURL: newNodeURL },
+            //we want to send the data inside the body as json format
+            json: true
+        };
+
+        //now we want to use the request options we defined above inside our 
+        //request promise. This request is going to return to us a promise. 
+        //We want to get all these promises for all the nodes requests  
+        //stored back in a single array.
+        //All of these requests are going to be asynchronous,
+        //which means we don't know when we're going to receive 
+        //the response data back from the request, because we're
+        //trying to reach an outside source (which is the other nodes
+        //in our network). Because we don't know when the response 
+        //will be returned, so we store all of these requests (promises)
+        //inside an array then we will run the entire array, where once we
+        //receive the response data back from each request, we use this data.
+        registerNodesPromises.push(requestPromise(requestOptions));
     });
+
+    //Once returned, all the promises (i.e. network requests) 
+    //we want to run them now. Once all of our requests have finished
+    //without any errors, we can assume that the new node URL has been registered
+    //with all of our network nodes successfully. 
+    //So after our broadcast is complete the next thing that we want to do
+    //is register all of the network nodes present in the network with our new 
+    //node. We do this inside the response returned data handler below, 
+    //where we now request the new node to call
+    //the '/register-nodes-bulk' endpoint to register all the other network nodes 
+    //with it. The response we get from this second request, we use another '.then' statement
+    //to wait for this response (which is the last response of these series of chained async http calls)
+    //where inside the response data handler we simply send a response back to whoever called the endpoint 
+    //to notify that: 'New node registered with network successfully'
+    Promise.all(registerNodesPromises)
+    .then(data => {
+        //Receiving our response data indicates that by this point
+        //the new node has already been broadcasted and registered with each 
+        //of the network nodes iteration. Now that we got back the data response from
+        //each promise/request, now we have to do, is register all the nodes currently inside
+        //of our network with the one new node that we're adding to the network. Therefore we're 
+        //going to request the new node URL to call the third endpoin: '/register-nodes-bulk'
+
+        //we need to define some options for our request.
+        //In the request body, we're sending all the other
+        //network nodes URLs plus the network node that we're 
+        //currently on where we're making our API requests.
+        //Note, we're passing our networkNodes array inside 
+        //an array, but we need to use the spreader operator (...)
+        // as we need to spread our networkNodes elements inside of 
+        //the outer array and not pass the networkNodes array inside
+        //the outer array directly, otherwise we won't have access to 
+        //each element in the array directly. 
+        const bulkRegisterOptions = {
+            uri: newNodeURL + '/register-nodes-bulk',
+            method: 'POST',
+            body: { allNetworkNodesURLs: [ ...testcoin.networkNodes, testcoin.currentNodeUrl ] },
+            json: true
+        };
+
+        //return the request promise from the request 
+        //'/register-nodes-bulk' made by the new node.
+        return requestPromise(bulkRegisterOptions)
+    })
+    .then(data => {
+        //In the returned response from 'requestPromise(bulkRegisterOptions)'
+        //which is returned request/promise from the request 
+        //'/register-nodes-bulk' made by the new node, we simply
+        //want to send a response to the node that called the endpoint.
+        res.json({ note: 'New node registered with network successfully.' });
+    })
 });
 
 //The second Endpoint to be called as part of the 3 step process of 
