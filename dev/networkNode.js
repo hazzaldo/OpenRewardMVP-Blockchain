@@ -69,6 +69,10 @@ const uuid = require('uuid/v1');
 //inside of our network node.
 //Now we can run our networkNode file with our port being passed in as a variable.
 const port = process.argv[2]; 
+
+//reference to 'request-promise' npm module which allows us to 
+//to request different nodes on the network using endpoints.  
+const requestPromise = require('request-promise'); 
 //creates a uuid for this node to act as the recipient address
 //to receive any incoming cryptocurrency. We use the split method
 //to remove the dashes that will be included in the uuid by default.
