@@ -16,16 +16,26 @@
 //If type the URL: localhost:3001  into a browser, 
 //this will return the GET api response we have.
 //If you change any api and its response. You need to stop the express
-//server (Ctrl+C). Then start it gain: node dev/api.js 
+//server (Ctrl+C). Then start it gain: node dev/networkNode.js 
 //(or if you haven't installed nodemon then: 'node dev/networkNode.js), 
 //to see the changes.
+//To run multiple instances of network nodes, to simulate a decentralised 
+//blockchain network, we have created in 'package.json' file, more node 
+//start commands (each with a different node start command incremented, as
+//well as the port numbers are incremented too, i.e.:
+//"node_1": "nodemon --watch dev -e js dev/networkNode.js 3001",
+//"node_2": "nodemon --watch dev -e js dev/networkNode.js 3002",
+//"node_3": "nodemon --watch dev -e js dev/networkNode.js 3003",
+//So to run multiple instances of node, open different terminal windows,
+//and each terminal run 'npm run nod_1', then in the next terminal window 
+//'npm run nod_2' ...etc. 
 
 //'nodemon' npm module is also added. This will help in automatically restarting
 //our express server application automatically whenever a change in the code 
-//in our 'api.js' file takes place. This is made possible by also adding the 
-//"start": "nodemon --watch dev -e js dev/api.js" script in the 'package.json' file
+//in our 'networkNode.js' file takes place. This is made possible by also adding the 
+//"start": "nodemon --watch dev -e js dev/networkNode.js" script in the 'package.json' file
 //So now we can simply run the command 'npm start', to start our express server,
-//and whenever we change any code in the 'api.js' file, it will automatically 
+//and whenever we change any code in the 'networkNode.js' file, it will automatically 
 //restart the express server for us, so we don't have to. 
 var express = require('express');
 
