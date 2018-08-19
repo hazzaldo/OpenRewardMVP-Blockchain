@@ -34,6 +34,19 @@ const Blockchain = require('./blockchain');
 //this library creates a unique random string for us.
 //We're going to use this string as this network node address.
 const uuid = require('uuid/v1');
+
+//refers to the "start": "nodemon --watch dev -e js dev/api.js 3001" command in 
+//package.json, to start the express server. You can think of this command
+//as an array of elements. The first two elements are represented by 
+//"nodemon --watch dev -e js dev/api.js". 
+//Note we added 3001 (representing the port number), to the end of 
+//this command in package.json. This is the third element of the command. 
+//If we wanted to add more vairables then we add a space followed by more 
+//variables to the command. So to access the third element we use argv[2] 
+//(as it is 0-indexed array) by doing this we have access to our port variable
+//inside of our network node.
+//Now we can run our networkNode file with our port being passed in as a variable.
+const port = process.argv[2]; 
 //creates a uuid for this node to act as the recipient address
 //to receive any incoming cryptocurrency. We use the split method
 //to remove the dashes that will be included in the uuid by default.
@@ -127,11 +140,34 @@ app.get('/mine', function(req, res) {
     });
 });
 
-//This whole server is listening on port 3000. 
+//This whole express js server use to listen to port 3000.
+//in previous git commits. Now we referenced the port as 
+//a variable because we want to create more than one 
+//instance of this networkNode.js api file (express server),
+//where each instance will represent a node on the network.
+//This is so to ensure there's no one node acting as the 
+//express js server with the APIs, but the network is decentralised
+//with more than one node acting as express js API server. 
+//So to create more than one instance we need each new 
+//instance to listen to a different port. Hence the port
+//can't be hard-coded (3000) but a port proprty that 
+//can be changed.
 //We also passed a function to the listen method, 
 //which will console log to output a message informing
 //us when the server starts and our port is running, we 
-//will be notified of the output console log text.
-app.listen(3000, function() {
-    console.log('Listening on port 3000... ');
+//will be notified of the output console log text. 
+//However, in the previous commits, we passed
+//hard-coded string message purely. This time
+//we want to change the hard-coded string of
+//3000 and instead passed string interpolation
+//passing the 'port' property to the string instead.
+//hence we're change from single string quotes, to
+//single back quotes to be able to pass property,
+//as string interpolation.
+//It should run port 3001 instead of 3000, because
+//'port' property is referencing
+//"start": "nodemon --watch dev -e js dev/api.js 3001" command in 
+//package.json 
+app.listen(port, function() {
+    console.log(`Listening on port ${port}... `);
 });
