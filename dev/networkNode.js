@@ -174,9 +174,24 @@ app.get('/mine', function(req, res) {
 //to the whole network so that other nodes can it add/register it as well.
 //Explanation here: https://www.udemy.com/build-a-blockchain-in-javascript/learn/v4/t/lecture/10399640?start=0
 app.post('/register-and-broadcast-node', function(req, res) {
-
+    //reference the new node URL from the request body.
     const newNodeURL = req.body.newNodeURL;
-    
+    //will check if the new node URL does not exist on the array of existing network nodes
+    //then push/add the new node URL to the array of existing nodes
+    //on the network. == -1 means it's not within the array index range
+    //(i.e. not part of the array).
+    if (testcoin.networkNodes.indexOf(newNodeURL) == -1) {
+        testcoin.networkNodes.push(newNodeURL);
+    }
+
+    //for each network node that is already present on the network
+    //(i.e. inside of our networkNodes array) we want to register,
+    //our new node URL with each of these nodes, by calling the 
+    //'register-node' endpoint. We're going to make a request to
+    //every network node at the 'register-node' endpoint.
+    testcoin.networkNodes.forEach(networkNodeURL => {
+        // '/register-node' endpoint 
+    });
 });
 
 //The second Endpoint to be called as part of the 3 step process of 
