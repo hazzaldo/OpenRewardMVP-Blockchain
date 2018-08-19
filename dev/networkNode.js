@@ -1,12 +1,24 @@
 //We're using 'express' which is a node JS library, to create
 // a server with APIs. To run/start the server, run the command:
-//'node dev/api.js' 
-//Then to call an api/route, which will be local host and 
-//port 3000. If type the URL: localhost:3000  into a browser, 
-//this will return the GET api response we have, in this example
-//'Hello World'. 
+//'npm run node_1', based on this configuration, where, our command 
+// to start this network node (or this express server), the specified 
+//command configuration in 'package.json' is: 
+//"node_1": "nodemon --watch dev -e js dev/networkNode.js 3001" 
+//So the command to start the network node (or express server) is "npm run node_1" 
+//Please be aware if you installed nodemon globally on your system rather locally 
+//the command would be different. In this project we installed nodemon locally, 
+//using 'npm i nodemon --save' bash command.  
+//Then to call an api/route, which will be localhost and 
+//the port will be whatever the port const is set to.
+//The 'const port = process.argv[2];' is referencing port number specified in
+//package.json: "node_1": "nodemon --watch dev -e js dev/networkNode.js 3001" 
+//in this case 3001.  
+//If type the URL: localhost:3001  into a browser, 
+//this will return the GET api response we have.
 //If you change any api and its response. You need to stop the express
-//server (Ctrl+C). Then start it gain (node dev/api.js), to see the changes.
+//server (Ctrl+C). Then start it gain: node dev/api.js 
+//(or if you haven't installed nodemon then: 'node dev/networkNode.js), 
+//to see the changes.
 
 //'nodemon' npm module is also added. This will help in automatically restarting
 //our express server application automatically whenever a change in the code 
