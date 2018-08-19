@@ -162,6 +162,16 @@ app.get('/mine', function(req, res) {
     });
 });
 
+//Endpoint that will register and broadcast a node to the whole
+//network. We will send in the URL of the new node that we want
+//to add to our network via the http request body.
+//We will then do some calculations and then broadcast it
+//to the whole network so that other nodes can it add it as well.
+app.post('/register-and-broadcast-node', function(req, res) {
+
+    const newNodeURL = req.body.newNodeURL;
+})
+
 //This whole express js server use to listen to port 3000.
 //in previous git commits. Now we referenced the port as 
 //a variable because we want to create more than one 
