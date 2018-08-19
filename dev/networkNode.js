@@ -186,9 +186,8 @@ app.post('/register-and-broadcast-node', function(req, res) {
     //(i.e. not part of the array). This is the first step where the new node
     //is now registered with the current network node that is running this API endpoint
     //and registering our new node.
-    if (testcoin.networkNodes.indexOf(newNodeURL) == -1) {
-        testcoin.networkNodes.push(newNodeURL);
-    }
+    if (testcoin.networkNodes.indexOf(newNodeURL) == -1) testcoin.networkNodes.push(newNodeURL);
+    
 
     //define an array to store all of our returned promises
     //from each request we make for each of our nodes to register 
@@ -246,7 +245,7 @@ app.post('/register-and-broadcast-node', function(req, res) {
     //with it. The response we get from this second request, we use another '.then' statement
     //to wait for this response (which is the last response of these series of chained async http calls)
     //where inside the response data handler we simply send a response back to whoever called the endpoint 
-    //to notify that: 'New node registered with network successfully'
+    //to notify that: 'New node registered with network successfully'.
     Promise.all(registerNodesPromises)
     .then(data => {
         //Receiving our response data indicates that by this point
@@ -273,7 +272,7 @@ app.post('/register-and-broadcast-node', function(req, res) {
             json: true
         };
 
-        //return the request promise from the request 
+        //return and run the request/promise which is 
         //'/register-nodes-bulk' made by the new node.
         return requestPromise(bulkRegisterOptions)
     })
@@ -283,23 +282,25 @@ app.post('/register-and-broadcast-node', function(req, res) {
         //'/register-nodes-bulk' made by the new node, we simply
         //want to send a response to the node that called the endpoint.
         res.json({ note: 'New node registered with network successfully.' });
-    })
+    });
 });
 
-//The second Endpoint to be called as part of the 3 step process of 
+//The second Endpoint to be called as part of the 3-steps process of 
 //registering a new node on the blockchain network.
 //This endpoint will be used by each of the nodes on the network 
 //(except the node that initially registered and broadcasted the new node on the network)
-//to register the new node with the network.
+//to register the new node with the network, from the broadcast they
+//will receive from the network node making the api endpoit call to register
+//and broadcast the new node.
 //The difference between this endpoint and the 
 //first end point: '/register-and-broadcast-node'
 //is that this endpoint will need to be called,
 //simply to enable all the other nodes on the network 
 //to accept the new network node, inside of this endpoint.
-//So this endpoint should be called after the other endpoint
-//'/register-and-broadcast-node' has already been called to 
-//register the new node, by an existing network node that used the first endpoint to register 
-//and broadcast it to the entire network). 
+//So this endpoint should be called by the other endpoint
+//'/register-and-broadcast-node' for each node in the network to 
+//register the new node. The first endpoint is only called by the node that will register 
+//and broadcast the new node to the entire network). 
 //So this endpoint only ensures the other nodes on the network register the new node. We do not 
 //want them to broadcast the new node, because the new node has already
 //been broadcast. If all the other nodes in the network were to broadcast
@@ -310,7 +311,27 @@ app.post('/register-and-broadcast-node', function(req, res) {
 //we just want them to register it.
 //Explanation here: https://www.udemy.com/build-a-blockchain-in-javascript/learn/v4/t/lecture/10399640?start=0
 app.post('/register-node', function(req, res) {
-
+    //store the new node URL from the request body that we 
+    //send to this endpoint, inside a property
+    const newNodeURL = req.body.newNodeURL;
+    //Error handling here: if the new node URL does not exist inside
+    //our network nodes then 'const nodeNotAlreadyPresent' will be true, otherwise
+    //it will be false (if the new node URL does exist).
+    //Then in the if statement we check the bool 'nodeNotAlreadyPresent' 
+    //if it's true we add the new node URL inside the blockchain copy
+    //of this node that is making the call to this endpoint.
+    //I.e. this now registers the new node, with the network
+    //node that is making this api endpoint request.
+    const nodeNotAlreadyPresent = bitcoin.networkNodes.indexOf(newNodeURL) == -1;
+    //Also checking that the new node URL is also not the current node calling this API
+    //endpoint. Because the node calling this endpoint is obviously not included
+    //in the 'networkNodes' array (i.e. its own copy of the blockchain or network of nodes).
+    //If they do not equal each other, then 'notCurrentNode' evaluate to true.
+    const notCurrentNode = testcoin.currentNodeUrl !== newNodeURL;
+    if (nodeNotAlreadyPresent && notCurrentNode) testcoin.networkNodes.push(newNodeURL);
+    //send response back to the network node to inform the new node
+    //is registered successfully with it.
+    res.json({ note: 'New node regsitered successfully.' });
 });
 
 //The third Endpoint to be called as part of the 3 step process of 
