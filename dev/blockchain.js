@@ -1,6 +1,12 @@
 
 const sha256 = require('sha256');
-
+//referencing the start server commands defined in 'package.json':
+//"node_1": "nodemon --watch dev -e js dev/networkNode.js 3001 http://localhost:3001"
+//and all the other nodes start commands i.e. node_2, node_3 ..etc. 
+//Specifically it is referencing the 4th variable in the command (argv[3] is index 4 in 0-indexed array)
+//which is the node's url e.g. http://localhost:3001. 
+//So now we should have access tothe current node's URL by using this variable. 
+const currentNodeUrl = process.argv[3];
 //I created constructor function over a class (just my preference), because in Javascript there really are no classes
 //Classes in Javascript are simply a kind of sugar coating on top of constructor functions and the object prototype.
 //So I simply prefer to stick with constructor function themselves.
@@ -20,6 +26,14 @@ function Blockchain() {
 	this.chain = [];
 	//here we will hold all the newly created trasactions before they're placed inside a block that is mined
 	this.pendingTransactions = [];
+
+	//We want to assign the current node URL to our blockchain data structure.
+	this.currentNodeUrl = currentNodeUrl;
+
+	//An array with all the nodes currently on the network
+	//so that our blockchain is always aware of all the nodes 
+	//inside our blockchain network.
+	this.networkNodes = [];
 
 	//create the gensis block. We will not have niether - nonce
 	//previousBlockHash or Hash params to provide. So we'll simply
