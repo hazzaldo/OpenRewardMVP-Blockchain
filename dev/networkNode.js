@@ -162,29 +162,38 @@ app.get('/mine', function(req, res) {
     });
 });
 
-//Endpoint that will register and broadcast the new node on its
+//The first Endpoint to be called as part of the 3 step process of 
+//registering a new node on the blockchain network.
+//This endpoint must be called on an existing node on the network 
+//which will register the new node on its
 //server and then it's going to broadcast this new node to all
-//of the other nodes on the whole network. 
-//We will send in the URL of the new node that we want
-//to add to our network via the http request body.
+//of the other nodes on the blockchain network. 
+//We will send the URL of the new node that we want
+//to add to our network via the request body.
 //We will then do some calculations and then broadcast it
-//to the whole network so that other nodes can it add it as well.
+//to the whole network so that other nodes can it add/register it as well.
+//Explanation here: https://www.udemy.com/build-a-blockchain-in-javascript/learn/v4/t/lecture/10399640?start=0
 app.post('/register-and-broadcast-node', function(req, res) {
 
     const newNodeURL = req.body.newNodeURL;
+    
 });
 
-//Endpoint will register a node with the network.
+//The second Endpoint to be called as part of the 3 step process of 
+//registering a new node on the blockchain network.
+//This endpoint will be used by each of the nodes on the network 
+//(except the node that initially registered and broadcasted the new node on the network)
+//to register the new node with the network.
 //The difference between this endpoint and the 
-//other end point: '/register-and-broadcast-node'
+//first end point: '/register-and-broadcast-node'
 //is that this endpoint will need to be called,
 //simply to enable all the other nodes on the network 
 //to accept the new network node, inside of this endpoint.
 //So this endpoint should be called after the other endpoint
 //'/register-and-broadcast-node' has already been called to 
-//register the new node on its own server first and broadcast
-//itself to the entire network. So this endpoint only ensures
-//the other nodes on the network register the new node. We do not 
+//register the new node, by an existing network node that used the first endpoint to register 
+//and broadcast it to the entire network). 
+//So this endpoint only ensures the other nodes on the network register the new node. We do not 
 //want them to broadcast the new node, because the new node has already
 //been broadcast. If all the other nodes in the network were to broadcast
 //the new node as well, that would severely degrade the performance of our 
@@ -192,7 +201,24 @@ app.post('/register-and-broadcast-node', function(req, res) {
 //the blockchain. 
 //So when all the other nodes on the network receive the URL of the new node
 //we just want them to register it.
+//Explanation here: https://www.udemy.com/build-a-blockchain-in-javascript/learn/v4/t/lecture/10399640?start=0
 app.post('/register-node', function(req, res) {
+
+});
+
+//The third Endpoint to be called as part of the 3 step process of 
+//registering a new node on the blockchain network.
+//This endpoint is called by the same network node that registered
+//and broadcasted the new node to the network (using the /register-and-broadcast-node' endpoint,
+//which is the first step of the 3-steps process of registering a new node on the network), 
+//which is going to make a request to the new node, passing the URLs of all the other existing 
+//nodes on the network with this endpoint request to the new node.
+//This endpoint call will register all the existing nodes on the network with our new node. 
+//Doing so the new node will be part of the network, completing the 3-steps regsiteration process
+//of a new node. Call this endpoint will also ensures each of the nodes on the network will be 
+//aware of all the other nodes on the network. 
+//Explanation here: https://www.udemy.com/build-a-blockchain-in-javascript/learn/v4/t/lecture/10399640?start=0
+app.post('/register-nodes-bulk', function(req, res) {
 
 });
 
