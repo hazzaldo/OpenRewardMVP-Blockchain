@@ -274,7 +274,7 @@ app.post('/register-and-broadcast-node', function(req, res) {
 
         //return and run the request/promise which is 
         //'/register-nodes-bulk' made by the new node.
-        return requestPromise(bulkRegisterOptions)
+        return requestPromise(bulkRegisterOptions);
     })
     .then(data => {
         //In the returned response from 'requestPromise(bulkRegisterOptions)'
