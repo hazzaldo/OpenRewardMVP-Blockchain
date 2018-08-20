@@ -336,18 +336,32 @@ app.post('/register-node', function(req, res) {
 
 //The third Endpoint to be called as part of the 3 step process of 
 //registering a new node on the blockchain network.
-//This endpoint is called by the same network node that registered
-//and broadcasted the new node to the network (using the /register-and-broadcast-node' endpoint,
-//which is the first step of the 3-steps process of registering a new node on the network), 
-//which is going to make a request to the new node, passing the URLs of all the other existing 
-//nodes on the network with this endpoint request to the new node.
-//This endpoint call will register all the existing nodes on the network with our new node. 
+//This endpoint is called by the the new node that has just been registered
+//and broadcasted on the network (using the /register-and-broadcast-node' endpoint,
+//which is the first step of the 3-steps process of registering a new node on the network). 
+//Calling this end point by the new node, and passing the URLs of all the other existing 
+//nodes on the network with this endpoint request to the new node, will 
+// register all the existing nodes on the network with our new node. 
 //Doing so the new node will be part of the network, completing the 3-steps regsiteration process
 //of a new node. Call this endpoint will also ensures each of the nodes on the network will be 
 //aware of all the other nodes on the network. 
 //Explanation here: https://www.udemy.com/build-a-blockchain-in-javascript/learn/v4/t/lecture/10399640?start=0
 app.post('/register-nodes-bulk', function(req, res) {
+    //all existing nodes URLs are passed via the body POST request 
+    //of this endpoint which is called from the '/register-and-broadcast-node' 
+    //endpoint, by the new node, as part of the chained async multiple endpoints calls.
+    //this is stored to an array.
+    //Remember this endpoint is called by the new node, so each of the networks nodes 
+    //iterated in the array are being added to the blockchain copy (i.e. testcoin.networkNodes)
+    //of the new node. Hence all network nodes are being registered with the new node.
+    const allNetworkNodes = req.body.allNetworkNodesURLs;
+    allNetworkNodes.forEach(networkNodeURL => {
+        const nodeNotAlreadyPresent = testcoin.networkNodes.indexOf(networkNodeURL) !== -1;
+        const notCurrentNode = testcoin.currentNodeUrl !== networkNodeURL;
+        if (nodeNotAlreadyPresent && notCurrentNode) testcoin.networkNodes.push(networkNodeURL);
+    });
 
+    res.json({ note: 'Bulk nodes registeration successful'});
 });
 
 //This whole express js server use to listen to port 3000.
