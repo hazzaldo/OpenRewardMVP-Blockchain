@@ -322,7 +322,7 @@ app.post('/register-node', function(req, res) {
     //of this node that is making the call to this endpoint.
     //I.e. this now registers the new node, with the network
     //node that is making this api endpoint request.
-    const nodeNotAlreadyPresent = bitcoin.networkNodes.indexOf(newNodeURL) == -1;
+    const nodeNotAlreadyPresent = testcoin.networkNodes.indexOf(newNodeURL) == -1;
     //Also checking that the new node URL is also not the current node calling this API
     //endpoint. Because the node calling this endpoint is obviously not included
     //in the 'networkNodes' array (i.e. its own copy of the blockchain or network of nodes).
