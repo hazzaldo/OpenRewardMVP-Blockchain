@@ -7,6 +7,11 @@ const sha256 = require('sha256');
 //which is the node's url e.g. http://localhost:3001. 
 //So now we should have access tothe current node's URL by using this variable. 
 const currentNodeUrl = process.argv[3];
+
+//This will be used to create unique IDs, such as transactionID for every 
+//transaction
+const uuid = require('uuid/v1');
+
 //I created constructor function over a class (just my preference), because in Javascript there really are no classes
 //Classes in Javascript are simply a kind of sugar coating on top of constructor functions and the object prototype.
 //So I simply prefer to stick with constructor function themselves.
@@ -92,13 +97,20 @@ Blockchain.prototype.createNewTransaction = function(amount, sender, recipient) 
 	const newTransaction = {
 		amount: amount,
 		sender: sender,
-		recipient: recipient
+		recipient: recipient,
+		transactionId: uuid().split('-').join('')
 	};
 
-	this.pendingTransactions.push(newTransaction);
-	//returns the index of the next block (when it's mined) that our new transaction will be stored in
+	return newTransaction;
+};
+
+//takes a transaction object and adds it to the pending transactions array
+Blockchain.prototype.addTransactionToPendingTransactions = function(transactionObj) {
+	this.pendingTransactions.push(transactionObj);
+
+	//returns the index of the next block (when it's mined) that our pending transactions will be stored in
 	return this.getLastBlock()['index'] + 1;
-}
+};
 
 //Hashing method - takes a block from the blockchain and hash it into some fixed length string
 //that to us will appear random. The block previous block hash, current block data and nonce 
