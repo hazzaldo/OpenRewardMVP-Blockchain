@@ -356,7 +356,7 @@ app.post('/register-nodes-bulk', function(req, res) {
     //of the new node. Hence all network nodes are being registered with the new node.
     const allNetworkNodes = req.body.allNetworkNodesURLs;
     allNetworkNodes.forEach(networkNodeURL => {
-        const nodeNotAlreadyPresent = testcoin.networkNodes.indexOf(networkNodeURL) !== -1;
+        const nodeNotAlreadyPresent = testcoin.networkNodes.indexOf(networkNodeURL) == -1;
         const notCurrentNode = testcoin.currentNodeUrl !== networkNodeURL;
         if (nodeNotAlreadyPresent && notCurrentNode) testcoin.networkNodes.push(networkNodeURL);
     });
