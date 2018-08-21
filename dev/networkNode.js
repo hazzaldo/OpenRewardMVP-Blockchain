@@ -102,33 +102,44 @@ app.get('/blockchain', function (req, res) {
 //This POST end point, is ('/transaction')
 //When we hit this endpoint, it is going to create new transaction
 app.post('/transaction', function(req, res) {
-    //We're creating a new transaction, passing it the cryptocurrency amount, send and recipient, which will be 
-    //passed in from the body request of whoever will be calling this end point when they create a new transaction
-    //This request will then return the block index (that will store the new transaction), as the response of the request
-    const blockIndexToStoreNewTrans = testcoin.createNewTransaction(req.body.amount, req.body.sender, req.body.recipient);
+    //we're assigning 'req.body' instead of 'req.body.newTransaction' to the variable because 
+    //in the '/transaction/broadcast' endpoint we're sending 'newTransaction' as the entire body
+    //(i.e. 'body: newTransaction', as opposed to 'body: ({newTransaction: });'
+    const newTransactionFromBroadcast = req.body;
+    //add new transaction to pending transactions array, and store the returned next block index
+    //to a property
+    const nextBlockIndexToStoreTransactions = testcoin.addTransactionToPendingTransactions(newTransactionFromBroadcast);
+    res.json({ note: `Transaction will be added in block ${nextBlockIndexToStoreTransactions}`});
+});
 
-    //This request will then return the block index (that will store the new transaction), as the response of the request.
-    //Will send this response as a json note.
-    res.json({ note: `Transaction will be added in block index ${blockIndexToStoreNewTrans}.` });
+//broadcast pending transactions to all nodes on the network
+//so that each node is sync'd with the same pending transactions
+//You only use this endpoint to create new transactions. Do not
+//call the other endpoint '/transaction', as that endpoint will be 
+//called by this endpoint.
+app.post('/transaction/broadcast', function(req, res) {
+    const newTransaction = testcoin.createNewTransaction(req.body.amount, req.body.sender, req.body.recipient);
+    testcoin.addTransactionToPendingTransactions(newTransaction);
 
-    //When the POST request is made, we're printing out the Request Body in the console log. 
-    //The Request Body is the data that we send with our post request 
-    //to be stored in the backend (in the form of JSON), in this case our backend is the Blockchain.
-    //This way when we make the POST request we can see what data we're going to store in the backend
-    //printed out in the console log - in this case it's the new transaction made.
-    /* console.log(req.body); */
+    const requestPromises = [];
+    //Broadcast the new transaction to all nodes on the network
+    testcoin.networkNodes.forEach(networkNodeURL => {
+        const requestOptions = {
+            uri: networkNodeURL + '/transaction',
+            method: 'POST',
+            body: newTransaction,
+            json: true
+        };
 
-    //In the response from request - in this case we're printing out the request body
-    //specifically the 'amount' key-value pair (which is the cryptocurrency amount) 
-    //in the request body JSON.
-    //W're using string interpolation to print out the req.body.amount from the JSON.
-    //You can test the end point 'localhost:3000/transaction' in postman, to see the resutls of
-    //this end point. 
-    //for more info on create 
-    /*res.send(`The amount of the transaction is ${req.body.amount} testcoin`); */
+        requestPromises.push(requestPromise(requestOptions));
+    });
 
-    //for more info one how to create POST request, follow this Udemy video lesson:
-    //https://www.udemy.com/build-a-blockchain-in-javascript/learn/v4/t/lecture/10399578?start=0
+    //Once all requests returned successfully we know the broadcast 
+    //of the new transactions to all network nodes worked.
+    Promise.all(requestPromises)
+    .then(data => {
+        res.json({ note: 'Transaction created and broadcast successfully.' });
+    });
 });
 
 //This GET end point, once called, uses the proofOfWork method defined in the blockchain
@@ -251,7 +262,7 @@ app.post('/register-and-broadcast-node', function(req, res) {
         //Receiving our response data indicates that by this point
         //the new node has already been broadcasted and registered with each 
         //of the network nodes iteration. Now that we got back the data response from
-        //each promise/request, now we have to do, is register all the nodes currently inside
+        //each promise/request, now we have to register all the nodes currently inside
         //of our network with the one new node that we're adding to the network. Therefore we're 
         //going to request the new node URL to call the third endpoin: '/register-nodes-bulk'
 
