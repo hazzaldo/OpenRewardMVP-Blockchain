@@ -144,6 +144,10 @@ app.post('/transaction/broadcast', function(req, res) {
 
 //This GET end point, once called, uses the proofOfWork method defined in the blockchain
 //to create a new block. It also create a new tranaction to reward the node that mined the block. 
+//Then it broadcast the newly created block to the rest of the nodes on the network, so they can add 
+//the newly created block to their copy of the blockchain, and hence sync the network. 
+//This is done by looping through each node URL on the network and getting it to call the
+//'/receive-new-block' endpoint, which adds the new block to its blockchain. 
 //finally it returns (i.e. the response will be) the success message that a new block is mined
 //and returns the new Block info.
 app.get('/mine', function(req, res) {
@@ -163,17 +167,51 @@ app.get('/mine', function(req, res) {
     const nonce = testcoin.proofOfWork(previousBlockHash, currentBlockData);
     const blockHash = testcoin.hashBlock(previousBlockHash, currentBlockData, nonce);
 
-    //Send a reward of 12.5 (cryptocurrency) to whoever mined the block.
-    //The "sender" address of 00 in standard blockchain means it is sent 
-    //as a reward. 
-    testcoin.createNewTransaction(12.5, "00", nodeAddress);
     const newBlock = testcoin.createNewBlock(nonce, previousBlockHash, blockHash);
 
+    const requestPromises = [];
+    testcoin.networkNodes.forEach(networkNodeURL => {
+        const requestOptions = {
+            uri: networkNodeURL + '/receive-new-block',
+            method: 'POST',
+            body: { newBlock: newBlock },
+            json: true
+        };
+
+        requestPromises.push(requestPromise(requestOptions));
+    });
+
+    //Now we run all requests and once the all return successfully, i.e. broadcast 
+    //is successful, we create a new request from our current node to create a new
+    //transaction to reward it for mining a block, and broadcast that reward to the
+    //the rest of the nodes on the network.
     //Finally we return or send a response back of new mined block as a response
-    //to whoever made the request
-    res.json( {
-        note: "New block mined successfully",
-        block: newBlock
+    //to whoever made the request.
+    Promise.all(requestPromises)
+    .then(data => {
+
+        //Make a broadcast to all nodes on the network of the reward
+        //transaction for mining a block, so that all other nodes are aware of it.
+        //Send a reward of 12.5 (cryptocurrency) to whoever mined the block.
+        //The "sender" address of 00 in standard blockchain means it is sent 
+        //as a reward. 
+        const requestOptions = {
+            uri: testcoin.currentNodeUrl + '/transaction/broadcast',
+            method: 'POST',
+            body: { amount: 12.5,
+                    sender: "00",
+                    recipient: nodeAddress
+            },
+            json: true
+        };
+
+        return requestPromise(requestOptions);
+    })
+    .then(data => {
+        res.json( {
+            note: "New block mined & broadcast successfully",
+            block: newBlock
+        });  
     });
 });
 
