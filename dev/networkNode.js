@@ -215,6 +215,27 @@ app.get('/mine', function(req, res) {
     });
 });
 
+
+app.post('/receive-new-block', function(req, res) {
+    const newBlock = req.body.newBlock;
+    const lastBlock =  testcoin.getLastBlock();
+    const validPreviousBlockHash = newBlock.previousBlockHash === lastBlock.hash;
+    const validBlockIndex = lastBlock['index'] + 1 === newBlock['index'];
+    if (validPreviousBlockHash && validBlockIndex) {
+        testcoin.chain.push(req.body.newBlock);
+        testcoin.pendingTransactions = [];
+        res.json({ 
+            note: "New block received and added to blockchain successfully.",
+            newBlock: newBlock 
+        });
+    } else {
+        res.json({ 
+            note: "New block rejected due to mismatch with previous block Hash or invalid continuation of index and will not be added to blockchain.",
+            newBlock: newBlock 
+        });
+    }
+});
+
 //The first Endpoint to be called as part of the 3 step process of 
 //registering a new node on the blockchain network.
 //This endpoint must be called on an existing node on the network 
