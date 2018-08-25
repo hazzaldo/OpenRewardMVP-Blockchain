@@ -144,6 +144,35 @@ Blockchain.prototype.proofOfWork = function(previousBlockHash, currentBlockData)
 	return nonce;
 }
 
+Blockchain.prototype.chainIsValid = function(blockchain) {
+	let validChain = true;
+	//Iterating through the blockchain of the node, and checking for 2 things
+	//We're checking to see if the previous block hash matches the current block's
+	//previousBlockHash property (i.e. they align properly). It also checks that the hashed block data starts 
+	//with four zeros (0000). 
+	//We also check a valid Genesis block separately, outside of the for loop (which loops through all the blocks)
+	//In the blockchain except the genesis block (which we created ourselves so it needs to have a different validation check)
+	//For genesis block we check a valid: nonce, previous block hash, current block hash and transactions
+	for (var i = 1; i < blockchain.length; i++) {
+		const currentBlock = blockchain[i];
+		const previousBlock = blockchain[i -1];
+		
+		const blockHash = this.blockHash(previousBlock['hash'], { transactions: currentBlock['transactions'], index: currentBlock['index'] }, currentBlock['nonce']);
+		const validBlockHash = (currentBlock['previousBlockHash'] == previousBlock['hash']);
+		const validNonce = blockHash.substring(0, 4) == '0000';
+		if (!validBlockHash || !validNonce) validChain = false;
+	};
+
+	const genesisBlock = blockchain[0];
+	const validGenesisNonce = genesisBlock['nonce'] === 100;
+	const validGenesisPreviousBlockHash = genesisBlock['previousBlockHash'] === '0';
+	const validGenesisBlockHash = genesisBlock['hash'] === '0';
+	const validGenesisBlockTransactions = genesisBlock['transactions'].length === 0;
+	if (!validGenesisNonce || !validGenesisPreviousBlockHash || !validGenesisBlockHash || !validGenesisBlockTransactions) validChain = false;
+
+	return validChain;
+};
+
 //export Blockchain constructor function to be accessible 
 //by other js files
 module.exports = Blockchain;
