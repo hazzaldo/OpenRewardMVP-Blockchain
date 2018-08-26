@@ -434,6 +434,70 @@ app.post('/register-nodes-bulk', function(req, res) {
     res.json({ note: 'Bulk nodes registeration successful'});
 });
 
+//The consensus API validates if the blockchain on the current node making the API call
+//is valid. This is done by looping through through each network node's blockchain and check to see if it's longer (i.e. has more blocks)
+//than the blockchain of the node making the consensus API request. This is the best way to 
+//validate because the longest blockchain means the most up-to-date and the one where most of 
+//the work has gone into it. So if a longer blockchain is found, then it should replace the blockchain
+//of the node making this API call (i.e. the 'consensus API).
+app.get('/consensus', function(req, res) {
+    const requestPromises = [];
+    testcoin.networkNodes.forEach(networkNodeURL => {
+        const requestOptions = {
+            uri: networkNodeURL + '/blockchain',
+            method: 'GET',
+            json: true
+        };
+
+        requestPromises.push(requestPromise(requestOptions));
+    });
+
+    //After making all the network requests 
+    //the blockchains of all the nodes will be returned in an array of blockchains
+    //We loop through each blockchain and check to see if it's longer (i.e. has more blocks)
+    //than the blockchain of the node making the consensus API request. This is the best way to 
+    //validate because the longest blockchain means the most up-to-date and the one where most of 
+    //the work has gone into it. So if a longer blockchain is found, then it should replace the blockchain
+    //of the node making this API call (i.e. the 'consensus API).
+    Promise.all(requestPromises)
+    .then(blockchains => {
+        //current node blockcahin length stored in a variable to keep track of it
+        const currentChainLength = testcoin.chain.length;
+        //Keeps track of the longest blockchain out of all the nodes in the network. At this point
+        //We haven't iterated through the other nodes blockchains yet, so the longest blockchain right now
+        //is the only we have access to which is the current node blockchain (the one making this /consensus API call).
+        let maxChainLength = currentChainLength;
+        let newLongestChain = null;
+        let newPendingTransactions = null;
+
+        blockchains.forEach(blockchain => {
+            if (blockchain.chain.length > maxChainLength) {
+                //if we find a new longest blockchain, then we need to replace
+                //the current longest blockchain with the new one
+                maxChainLength = blockchain.chain.length;
+                newLongestChain = blockchain.chain; 
+                //We also want to replace the pending transaction associated with the current blockchain
+                //(that was the longest) with the pending transaction associated with the new longest blockchain
+                newPendingTransactions = blockchain.pendingTransactions;
+            };
+        });
+
+        if (!newLongestChain || (newLongestChain && !testcoin.chainIsValid(newLongestChain))) {
+            res.json({ 
+                note: 'Current blockchain has not been replaced',
+                chain: testcoin.chain
+            });
+        } else { 
+            testcoin.chain = newLongestChain;
+            testcoin.pendingTransactions = newPendingTransactions;
+            res.json( { 
+                note: 'This blockchain has been replaced with the most up-to-date and valid blockchain.',
+                chain: testcoin.chain
+             });
+        }
+    });
+})
+
 //This whole express js server use to listen to port 3000.
 //in previous git commits. Now we referenced the port as 
 //a variable because we want to create more than one 

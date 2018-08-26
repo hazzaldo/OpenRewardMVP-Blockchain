@@ -157,10 +157,12 @@ Blockchain.prototype.chainIsValid = function(blockchain) {
 		const currentBlock = blockchain[i];
 		const previousBlock = blockchain[i -1];
 		
-		const blockHash = this.blockHash(previousBlock['hash'], { transactions: currentBlock['transactions'], index: currentBlock['index'] }, currentBlock['nonce']);
+		const blockHash = this.hashBlock(previousBlock['hash'], { transactions: currentBlock['transactions'], index: currentBlock['index'] }, currentBlock['nonce']);
 		const validBlockHash = (currentBlock['previousBlockHash'] == previousBlock['hash']);
 		const validNonce = blockHash.substring(0, 4) == '0000';
 		if (!validBlockHash || !validNonce) validChain = false;
+		console.log('previousBlockHash =>', previousBlock['hash']);
+		console.log('currentBlockHash =>', currentBlock['hash']);
 	};
 
 	const genesisBlock = blockchain[0];
